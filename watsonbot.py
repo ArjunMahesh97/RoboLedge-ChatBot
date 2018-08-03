@@ -92,6 +92,9 @@ def message(bot, update):
 	#print(r)
 	#print(response['entities'][4]['metadata']['numeric_value'])
 
+    if intent == 'Money_Spent':
+    	print('aaa')
+    	update.message.reply_text(response['output']['text'][0])
 
     if intent == 'Spent_money_on':
 	spent=response['entities'][1]['metadata']['numeric_value']
