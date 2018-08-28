@@ -33,8 +33,8 @@ def message(bot, update):
     print('Received an update')
     global context
 
-    conversation = ConversationV1(username='******',  # TODO
-                                  password='******',  # TODO
+    conversation = ConversationV1(username='*******',  # TODO
+                                  password='*******',  # TODO
                                   version='2018-02-16')
 
     # get response from watson
