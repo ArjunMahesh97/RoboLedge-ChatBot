@@ -1,2 +1,4 @@
-# RoboLedge-ChatBot
-Chat bot that keeps a track of your budget
+# roboledge
+A telegram bot to keep track of user expenses.
+
+Coming Soon

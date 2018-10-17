@@ -1,4 +1,6 @@
 from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
+from watson_developer_cloud import ConversationV1
+import json
 
 context = None
 
@@ -15,10 +17,28 @@ def help(bot, update):
     update.message.reply_text('Help!')
 
 
-def echo(bot, update):
+def message(bot, update):
     print('Received an update')
-    update.message.reply_text(update.message.text.upper())
+    global context
 
+    conversation = ConversationV1(username='USERNAME',  # TODO
+                                  password='PASSWORD',  # TODO
+                                  version='2018-02-16')
+
+    # get response from watson
+    response = conversation.message(
+        workspace_id='WORKSPACE_ID',  # TODO
+        input={'text': update.message.text},
+        context=context)
+    print(json.dumps(response, indent=2))
+    context = response['context']
+
+    # build response
+    resp = ''
+    for text in response['output']['text']:
+        resp += text
+
+    update.message.reply_text(resp)
 
 def main():
     # Create the Updater and pass it your bot's token.
@@ -32,7 +52,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    dp.add_handler(MessageHandler(Filters.text, message))
 
     # Start the Bot
     updater.start_polling()
