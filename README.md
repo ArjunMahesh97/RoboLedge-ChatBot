@@ -1,4 +1,3 @@
 # roboledge
-A telegram bot to keep track of user expenses.
 
-Coming Soon
+A telegram bot that keeps track of user expenses
