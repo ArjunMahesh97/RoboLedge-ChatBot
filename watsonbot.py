@@ -40,7 +40,7 @@ def message(bot, update):
     print(response)    
     #print(json.dumps(response, indent=2))
     #print('aa')
-    context = response.result['context']
+    context = response.result['context']       #all responses now have result key
     #print(context)
     # build response
     
