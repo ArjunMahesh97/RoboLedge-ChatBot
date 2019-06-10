@@ -1,5 +1,5 @@
 from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
-from watson_developer_cloud import ConversationV1
+from ibm_watson import AssistantV1
 import json
 
 context = None
@@ -21,13 +21,13 @@ def message(bot, update):
     print('Received an update')
     global context
 
-    conversation = ConversationV1(username='USERNAME',  # TODO
-                                  password='PASSWORD',  # TODO
+    conversation = AssistantV1(username=assist_username,  # TODO
+                                  password=assist_password,  # TODO
                                   version='2018-02-16')
 
     # get response from watson
     response = conversation.message(
-        workspace_id='WORKSPACE_ID',  # TODO
+        workspace_id=workspace_id,  # TODO
         input={'text': update.message.text},
         context=context)
     print(json.dumps(response, indent=2))
@@ -42,7 +42,7 @@ def message(bot, update):
 
 def main():
     # Create the Updater and pass it your bot's token.
-    updater = Updater('Your Token Here')  # TODO
+    updater = Updater(bot_id)  # TODO
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher

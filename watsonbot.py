@@ -1,5 +1,5 @@
 from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
-from watson_developer_cloud import AssistantV1
+from ibm_watson import AssistantV1
 import json
 import sqlite3
 
@@ -28,23 +28,23 @@ def message(bot, update):
     print('Received an update')
     global context
     
-    conversation = AssistantV1(username='6f64e7f6-b44c-4b9d-b379-161a45939e6a',
-     password='bPjwhQxzBUvG',
+    conversation = AssistantV1(username='assist_username',
+     password='assist_password',
      version='2018-02-16')
     
     # get response from watson
     response = conversation.message(
-        workspace_id='2bc9c395-797c-4996-85ce-91af808412d7', 
+        workspace_id=workspace_id, 
         input={'text': update.message.text}, 
         context=context)
-    print(response)    
+    print('response', response)    
     #print(json.dumps(response, indent=2))
     #print('aa')
-    context = response.result['context']
-    #print(context)
+    # context = response.result['context']
+    # print('context', context)
     # build response
     
-    print(response.result['intents'])
+    # print('intents', response.result['intents'])
     
     
     # resp = ''
@@ -54,7 +54,7 @@ def message(bot, update):
     resp=response.result['output']['text']
     
     
-    print(resp)
+    print('send res', resp)
     # if len(response['entities'])>0:    
     #     entity = response['entities'][0]['entity']
     #     value = response['entities'][0]['value']
@@ -62,23 +62,28 @@ def message(bot, update):
     # handle no intents
     if len(response.result['intents'])>0:
         intent=response.result['intents'][0]['intent']
-        print(intent)
+        print('intent: ', intent)
     
-    context = response.result['context']
+    # context = response.result['context']
     # build response
 
     #print(response['entities'][4]['metadata']['numeric_value'])
- 
+    # print('aaaaaaaaaaaaa')
     if intent == 'enter_name':
+        # print('bbbbb')
+        # print('lolol',response.result['input']['text'])
         global name
         name = response.result['input']['text']
-        print(name)
+        # print('hello',name)
+        # print('ccc')
         update.message.reply_text(response.result['output']['text'][0])    
         
     if intent == 'Set_budget':
         print(name)
-        budg=response.result['entities'][2]['metadata']['numeric_value']
+        budg=response.result['entities'][-1]['metadata']['numeric_value']
+        print('budg', budg)
         date = response.result['entities'][0]['value']
+        print('date', date)
         #print(date)
         #print(response['entities'][4]['metadata']['numeric_value'])
         update.message.reply_text(response.result['output']['text'][0])
@@ -99,6 +104,7 @@ def message(bot, update):
         update.message.reply_text(response.result['output']['text'][0])
 
     if intent == 'Spent_money_on':
+        context = response.result['context']
         spent=response.result['entities'][1]['metadata']['numeric_value']
         item=response.result['context']['item']
         #print(response['entities'][1]['metadata']['numeric_value'])
@@ -130,7 +136,7 @@ def message(bot, update):
             c.execute(query)
             conn.commit()
             r=c.fetchall()
-            print(r[0][0])
+            print('row', r[0][0])
             budg=str(r[0][0]) 
             if r[0][0] > 0:
                 update.message.reply_text(outp+" "+budg)
@@ -143,7 +149,7 @@ def message(bot, update):
 
 def main():
     # Create the Updater and pass it your bot's token.
-    updater = Updater('590080454:AAE02s747BI7Db3wVe6w6aaFg-YKEEGdol8')
+    updater = Updater('bot_id')
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
