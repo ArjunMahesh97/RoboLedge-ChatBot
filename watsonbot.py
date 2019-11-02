@@ -28,13 +28,13 @@ def message(bot, update):
     print('Received an update')
     global context
     
-    conversation = AssistantV1(username='assist_username',
-     password='assist_password',
+    conversation = AssistantV1(username=assist_username,
+     password=assist_password, #replace from keys file
      version='2018-02-16')
     
     # get response from watson
     response = conversation.message(
-        workspace_id=workspace_id, 
+        workspace_id=workspace_id, #replace from keys file
         input={'text': update.message.text}, 
         context=context)
     print('response', response)    
@@ -87,8 +87,17 @@ def message(bot, update):
         #print(date)
         #print(response['entities'][4]['metadata']['numeric_value'])
         update.message.reply_text(response.result['output']['text'][0])
-        query = 'INSERT INTO expenditure1 (userID,date,budget) VALUES("%s","%s",%d)'%(name,date,budg)
-        print(query)
+        is_budget_already_set = 'select * from expenditure1 where userID="%s" and date="%s"'%(name, date)
+        print(is_budget_already_set)
+        c.execute(is_budget_already_set)
+        conn.commit()
+        r = c.fetchall()
+        print(r)
+        if(len(r) > 0):
+            query = 'update expenditure1 set budget=%d where userID="%s" and date="%s"'%(budg, name, date)
+        else:
+            query = 'INSERT INTO expenditure1 (userID,date,budget) VALUES("%s","%s",%d)'%(name,date,budg)
+        print('query' + query)
         try:
             c.execute(query)
             conn.commit()
@@ -129,10 +138,20 @@ def message(bot, update):
 
     if intent == 'Remaining_budget':
         outp=response.result['output']['text'][0]
-        query='SELECT budget FROM expenditure1 WHERE userID="%s"'%(name)
+        # print(response.result)
+        date = None
+        for e in response.result['entities']:
+            # print(e)
+            if(e['entity'] == 'sys-date'):
+                date = e['value']
+        print(date)
+        if(date is None):
+            query = 'select budget from expenditure1 where userID="%s"'%(name)
+        else:
+            query = 'select budget from expenditure1 where userID="%s" and date="%s"'%(name, date)
         print(query)
         try:
-            #print(c.execute(query))        
+            print(c.execute(query))        
             c.execute(query)
             conn.commit()
             r=c.fetchall()
@@ -149,7 +168,7 @@ def message(bot, update):
 
 def main():
     # Create the Updater and pass it your bot's token.
-    updater = Updater('bot_id')
+    updater = Updater(bot_id) #replace from keys file
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
