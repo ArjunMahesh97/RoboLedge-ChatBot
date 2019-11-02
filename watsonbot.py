@@ -40,8 +40,10 @@ def message(bot, update):
     print('response', response)    
     #print(json.dumps(response, indent=2))
     #print('aa')
+
     # context = response.result['context']
     # print('context', context)
+
     # build response
     
     # print('intents', response.result['intents'])
