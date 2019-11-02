@@ -28,13 +28,13 @@ def message(bot, update):
     print('Received an update')
     global context
     
-    conversation = AssistantV1(username=assist_username,
-     password=assist_password, #replace from keys file
+    conversation = AssistantV1(username='assist_username',
+     password='assist_password', #replace from keys file
      version='2018-02-16')
     
     # get response from watson
     response = conversation.message(
-        workspace_id=workspace_id, #replace from keys file
+        workspace_id='workspace_id', #replace from keys file
         input={'text': update.message.text}, 
         context=context)
     print('response', response)    
@@ -170,7 +170,7 @@ def message(bot, update):
 
 def main():
     # Create the Updater and pass it your bot's token.
-    updater = Updater(bot_id) #replace from keys file
+    updater = Updater('bot_id') #replace from keys file
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
